@@ -47,27 +47,20 @@ RUN apt-get update \
         openssh-client \        
     && rm -rf /var/lib/apt/lists/*
 
-ENV GRADLE_VERSION 6.9.2
+ARG GRADLE_VERSION=6.9.2
 RUN set -o errexit -o nounset \
     && echo "Downloading Gradle" \
-    && wget --no-verbose --output-document=gradle.zip "https://services.gradle.org/distributions/gradle-6.9.2-bin.zip" \
-    && echo "Installing Gradle" \
+    && wget --no-verbose --output-document=gradle.zip "https://services.gradle.org/distributions/gradle-$GRADLE_VERSION-bin.zip" \
+    && echo "I=nstalling Gradle" \
     && unzip gradle.zip \
     && rm gradle.zip \
-    && mv "gradle-6.9.2" "${GRADLE_HOME}/" \
+    && mv "gradle-$GRADLE_VERSION" "${GRADLE_HOME}/" \
     && ln --symbolic "${GRADLE_HOME}/bin/gradle" /usr/bin/gradle \
     \
     && echo "Testing Gradle installation" \
     && gradle --version
 
 WORKDIR /
-#COPY tmp/ /tmp
-#RUN mv /tmp/cacerts /opt/java/openjdk/lib/security/cacerts
-#RUN mv /tmp/cacerts /usr/lib/jvm/java-11-openjdk-amd64/lib/security/cacerts
-#USER root
-#RUN chown root:root /opt/java/openjdk/lib/security/cacerts
-#RUN chown root:root /usr/lib/jvm/java-11-openjdk-amd64/lib/security/cacerts
-#COPY m2/ /root/.m2/
 
 RUN apt-get update && apt-get install -y apt-utils xdg-utils fonts-liberation libcairo2 libgbm1 libgtk-3-0 libpango-1.0-0 libxdamage1 libxkbcommon0 libu2f-udev xvfb libgtk2.0-0 libxtst6 libxss1 libgconf-2-4 libnss3 libasound2 
 
@@ -120,9 +113,9 @@ RUN apt-get update -qqy \
 # GeckoDriver
 #============
 ARG GECKODRIVER_VERSION=v0.30.0
-RUN wget --no-verbose https://github.com/mozilla/geckodriver/releases/download/v0.30.0/geckodriver-v0.30.0-linux32.tar.gz \
+RUN wget --no-verbose https://github.com/mozilla/geckodriver/releases/download/$GECKODRIVER_VERSION/geckodriver-$GECKODRIVER_VERSION-linux32.tar.gz \
   && rm -rf /opt/geckodriver \
-  && tar -C /opt -zxf geckodriver-v0.30.0-linux32.tar.gz \
+  && tar -C /opt -zxf geckodriver-$GECKODRIVER_VERSION-linux32.tar.gz \
   && chmod 755 /opt/geckodriver \
   && ln -fs /opt/geckodriver /usr/bin/geckodriver
 
